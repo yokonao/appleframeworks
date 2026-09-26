@@ -12,6 +12,7 @@ other platforms fail to compile.
 |---|---|
 | `corefoundation` | CoreFoundation objects shared by the other packages |
 | `security` | Keychain Services (`SecItemAdd`, `SecItemCopyMatching`, `SecItemUpdate`, `SecItemDelete`, `SecAccessControl`) |
+| `localauthentication` | LocalAuthentication (`LAContext`) for Touch ID and device password prompts |
 | `security/legacy` | Deprecated APIs of the file-based keychain (`SecKeychain`, `SecAccess`, `SecTrustedApplication`) |
 
 ## Usage
@@ -43,9 +44,19 @@ The API mirrors the C API: queries are dictionaries keyed by the same constants,
 and results take the shape the query asks for. See the package documentation for
 how values are converted between Go and CoreFoundation.
 
-Constants hold their symbol names and are resolved at run time. A constant this
+Keychain constants hold their symbol names and are resolved at run time. A constant this
 module does not define yet can be used as `security.Key("kSecAttrXxx")`, and one
 missing from the running macOS returns `security.ErrUnavailable`.
+
+```go
+import la "github.com/yokonao/appleframeworks/localauthentication"
+
+c, err := la.NewContext()
+err = c.EvaluatePolicy(la.PolicyDeviceOwnerAuthenticationWithBiometrics, "unlock the vault")
+if errors.Is(err, la.ErrUserCancel) {
+	// ...
+}
+```
 
 ## Development
 
@@ -56,4 +67,4 @@ the headers of the installed macOS SDK:
 go generate ./...
 ```
 
-Tests add and remove items in the login keychain.
+Tests add and remove items in the login keychain. `LA_MANUAL=1 go test -run Manual ./localauthentication` shows a Touch ID prompt.
