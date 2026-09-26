@@ -71,6 +71,20 @@ Keychain items with `AttrAccessControl`, and `UseAuthenticationContext`, work on
 data protection keychain, which requires a signed binary with the keychain-access-groups
 entitlement. Ad-hoc signed binaries can use the file-based keychain through `security/legacy`.
 
+## Supported macOS
+
+macOS 12 Monterey or later, the oldest that Go 1.26 runs on. Every function, class and
+method this module binds is available there. These constants need a newer macOS and
+return `ErrUnavailable` on older ones:
+
+| Constant | macOS |
+|---|---|
+| `MatchHostOrSubdomainOfHost` | 15.0 |
+
+`go test ./internal/availability` checks this against the installed SDK, so a newly bound
+symbol that raises the requirement fails the test. It cannot detect symbols Apple removes,
+such as the deprecated ones in `security/legacy`.
+
 ## Development
 
 The constants in `security/symbols.go` and `security/errors.go` are generated from
