@@ -87,6 +87,12 @@ such as the deprecated ones in `security/legacy`.
 
 ## Development
 
+```sh
+go test ./...
+golangci-lint run
+golangci-lint fmt
+```
+
 The constants in `security/symbols.go` and `security/errors.go` are generated from
 the headers of the installed macOS SDK:
 
