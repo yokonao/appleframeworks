@@ -23,7 +23,8 @@ const (
 	numberFloat64Type  = 6
 )
 
-// ErrUnavailable reports a function or constant missing from the running macOS.
+// ErrUnavailable reports a framework, function or constant missing from the
+// running macOS.
 var ErrUnavailable = errors.New("not available on this macOS")
 
 var coreFoundation uintptr
@@ -124,7 +125,11 @@ var Load = sync.OnceValue(func() error {
 
 // Open opens a framework. Opening the same one again returns the same handle.
 func Open(path string) (uintptr, error) {
-	return purego.Dlopen(path, purego.RTLD_LAZY|purego.RTLD_GLOBAL)
+	lib, err := purego.Dlopen(path, purego.RTLD_LAZY|purego.RTLD_GLOBAL)
+	if err != nil {
+		return 0, fmt.Errorf("%s is %w: %w", path, ErrUnavailable, err)
+	}
+	return lib, nil
 }
 
 // Bind registers each C function named by a key into the function pointer
