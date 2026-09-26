@@ -3,7 +3,6 @@
 package security
 
 import (
-	"github.com/yokonao/appleframeworks/corefoundation"
 	"github.com/yokonao/appleframeworks/internal/cf"
 )
 
@@ -25,7 +24,7 @@ const (
 // NewAccessControl calls SecAccessControlCreateWithFlags. Pass the result as
 // the value of AttrAccessControl. protection is one of the AttrAccessible
 // constants.
-func NewAccessControl(protection Constant, flags AccessControlFlags) (*corefoundation.Object, error) {
+func NewAccessControl(protection Constant, flags AccessControlFlags) (*Object, error) {
 	if err := load(); err != nil {
 		return nil, err
 	}

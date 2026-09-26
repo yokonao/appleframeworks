@@ -173,9 +173,9 @@ func Own(ref Ref) *Object {
 	return o
 }
 
-// Pointer returns the underlying CFTypeRef. The caller must keep o reachable
+// CFTypeRef returns the underlying CFTypeRef. The caller must keep o reachable
 // while using it.
-func (o *Object) Pointer() uintptr {
+func (o *Object) CFTypeRef() uintptr {
 	return o.ref
 }
 

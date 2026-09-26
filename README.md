@@ -10,7 +10,6 @@ other platforms fail to compile.
 
 | Package | Framework |
 |---|---|
-| `corefoundation` | CoreFoundation objects shared by the other packages |
 | `security` | Keychain Services (`SecItemAdd`, `SecItemCopyMatching`, `SecItemUpdate`, `SecItemDelete`, `SecAccessControl`) |
 | `localauthentication` | LocalAuthentication (`LAContext`) for Touch ID and device password prompts |
 | `security/legacy` | Deprecated APIs of the file-based keychain (`SecKeychain`, `SecAccess`, `SecTrustedApplication`) |
@@ -57,6 +56,20 @@ if errors.Is(err, la.ErrUserCancel) {
 	// ...
 }
 ```
+
+Objects of one framework are passed to another through their `CFTypeRef` method, such as
+an `LAContext` to reuse its authentication for Keychain items:
+
+```go
+data, err := security.CopyMatching(security.Attrs{
+	// ...
+	security.UseAuthenticationContext: c,
+})
+```
+
+Keychain items with `AttrAccessControl`, and `UseAuthenticationContext`, work only in the
+data protection keychain, which requires a signed binary with the keychain-access-groups
+entitlement. Ad-hoc signed binaries can use the file-based keychain through `security/legacy`.
 
 ## Development
 

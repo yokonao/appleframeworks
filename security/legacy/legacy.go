@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/yokonao/appleframeworks/corefoundation"
 	"github.com/yokonao/appleframeworks/internal/cf"
 	"github.com/yokonao/appleframeworks/security"
 )
@@ -39,7 +38,7 @@ var load = sync.OnceValue(func() error {
 	})
 })
 
-func create(fn func(*cf.Ref) int32) (*corefoundation.Object, error) {
+func create(fn func(*cf.Ref) int32) (*security.Object, error) {
 	if err := load(); err != nil {
 		return nil, err
 	}
@@ -51,7 +50,7 @@ func create(fn func(*cf.Ref) int32) (*corefoundation.Object, error) {
 }
 
 // DefaultKeychain calls SecKeychainCopyDefault.
-func DefaultKeychain() (*corefoundation.Object, error) {
+func DefaultKeychain() (*security.Object, error) {
 	return create(func(keychain *cf.Ref) int32 {
 		return secKeychainCopyDefault(keychain)
 	})
@@ -59,7 +58,7 @@ func DefaultKeychain() (*corefoundation.Object, error) {
 
 // NewTrustedApplication calls SecTrustedApplicationCreateFromPath. An empty
 // path means the running binary.
-func NewTrustedApplication(path string) (*corefoundation.Object, error) {
+func NewTrustedApplication(path string) (*security.Object, error) {
 	return create(func(app *cf.Ref) int32 {
 		if path == "" {
 			return secTrustedApplicationCreateFromPath(nil, app)
@@ -71,7 +70,7 @@ func NewTrustedApplication(path string) (*corefoundation.Object, error) {
 
 // NewAccess calls SecAccessCreate. Without trusted applications, only the
 // running binary is trusted.
-func NewAccess(descriptor string, trusted ...*corefoundation.Object) (*corefoundation.Object, error) {
+func NewAccess(descriptor string, trusted ...*security.Object) (*security.Object, error) {
 	return create(func(access *cf.Ref) int32 {
 		d := cf.String(descriptor)
 		defer cf.CFRelease(d)
@@ -79,7 +78,7 @@ func NewAccess(descriptor string, trusted ...*corefoundation.Object) (*corefound
 		if len(trusted) > 0 {
 			refs := make([]cf.Ref, len(trusted))
 			for i, t := range trusted {
-				refs[i] = t.Pointer()
+				refs[i] = t.CFTypeRef()
 			}
 			list = cf.Array(refs)
 			defer cf.CFRelease(list)

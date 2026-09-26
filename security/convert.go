@@ -67,9 +67,9 @@ func toCF(v any) (cf.Ref, error) {
 			return 0, err
 		}
 		return cf.CFRetain(ref), nil
-	case *cf.Object:
+	case interface{ CFTypeRef() uintptr }:
 		defer runtime.KeepAlive(v)
-		return cf.CFRetain(v.Pointer()), nil
+		return cf.CFRetain(v.CFTypeRef()), nil
 	case []any:
 		refs, err := toCFs(v)
 		if err != nil {

@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yokonao/appleframeworks/corefoundation"
 	kc "github.com/yokonao/appleframeworks/security"
 	"github.com/yokonao/appleframeworks/security/legacy"
 )
@@ -96,7 +95,7 @@ func TestLegacyAccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, ok := ref.(*corefoundation.Object); !ok {
+	if _, ok := ref.(*kc.Object); !ok {
 		t.Fatalf("ReturnRef = %T", ref)
 	}
 }

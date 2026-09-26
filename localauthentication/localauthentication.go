@@ -71,9 +71,10 @@ func NewContext() (*Context, error) {
 	return c, nil
 }
 
-// Pointer returns the underlying LAContext, such as for kSecUseAuthenticationContext.
-// The caller must keep c reachable while using it.
-func (c *Context) Pointer() uintptr {
+// CFTypeRef returns the underlying LAContext, such as for calls through
+// purego/objc. The caller must keep c reachable while using it. Pass c itself
+// as the value of security.UseAuthenticationContext.
+func (c *Context) CFTypeRef() uintptr {
 	return uintptr(c.id)
 }
 

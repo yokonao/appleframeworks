@@ -19,7 +19,8 @@
 //	[]any        CFArray
 //	Attrs, Dict  CFDictionary (Dict when read back)
 //	Constant     the constant it names
-//	*corefoundation.Object  any other object, such as SecAccessControlRef
+//	CFTypeRef()  any other object, such as *Object or *localauthentication.Context
+//	             (*Object when read back)
 package security
 
 import (
@@ -35,6 +36,10 @@ type Key string
 
 // Constant is the symbol name of a value constant, such as "kSecClassGenericPassword".
 type Constant string
+
+// Object is a CoreFoundation object, such as a SecAccessControlRef. It is
+// released when it becomes unreachable.
+type Object = cf.Object
 
 // Attrs is a query or attribute dictionary passed to Keychain Services.
 type Attrs map[Key]any

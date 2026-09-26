@@ -4,10 +4,12 @@ package security
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/yokonao/appleframeworks/internal/cf"
+	"github.com/yokonao/appleframeworks/localauthentication"
 )
 
 func TestConvertRoundTrip(t *testing.T) {
@@ -57,5 +59,24 @@ func TestConvertErrors(t *testing.T) {
 	}
 	if _, err := toCF(Attrs{Key("kSecAttrNoSuchKey"): "x"}); err == nil {
 		t.Error("toCF accepted an unknown symbol")
+	}
+}
+
+func TestConvertCFTypeRef(t *testing.T) {
+	if err := load(); err != nil {
+		t.Fatal(err)
+	}
+	c, err := localauthentication.NewContext()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ref, err := toCF(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := fromCF(ref)
+	cf.CFRelease(ref)
+	if o, ok := got.(*Object); !ok || !strings.Contains(o.String(), "LAContext") {
+		t.Errorf("round trip of LAContext = %v", got)
 	}
 }
